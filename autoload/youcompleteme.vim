@@ -734,6 +734,12 @@ function! s:DisableAutoHover()
   augroup END
 endfunction
 
+"fu! StartsWith(longer, shorter) abort
+"  return a:longer[0:len(a:shorter)-1] ==# a:shorter
+"endfunction
+function! s:IsFugitiveBuf(longer) abort
+  return a:longer[0:len('fugitive:')-1] ==# 'fugitive:'
+endfunction
 
 function! s:OnFileTypeSet()
   " The contents of the command-line window are empty when the filetype is set
@@ -746,6 +752,14 @@ function! s:OnFileTypeSet()
   if !s:AllowedToCompleteInCurrentBuffer()
     return
   endif
+
+  let current_buffer_name = bufname('')
+  if s:IsFugitiveBuf(current_buffer_name)
+    "echom 'it is fugitive buffer'
+    return
+  endif
+  "let sss = s:IsFugitiveBuf(current_buffer_name)
+  " echom current_buffer_name . ' ' . sss
 
   call s:SetUpCompleteopt()
   call s:EnableCompletingInCurrentBuffer()
